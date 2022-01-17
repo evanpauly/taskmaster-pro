@@ -33,7 +33,6 @@ var loadTasks = function() {
 
   // loop over object properties
   $.each(tasks, function(list, arr) {
-    console.log(list, arr);
     // then loop over sub-array
     arr.forEach(function(task) {
       createTask(task.text, task.date, list);
@@ -80,6 +79,62 @@ $("#task-form-modal .btn-primary").click(function() {
 
     saveTasks();
   }
+
+  $(".list-group").on("click", "p", function() {
+    var text = $(this)
+    var textInput = $("<textarea>")
+    $(this).replaceWith(textInput)
+    textInput.trigger("focus")
+    .addClass("form-control")
+    .val(text)
+    .text()
+    .trim();
+  });
+
+  $(".list-group").on("blur", "textarea", function() {
+    var text = $(this)
+      .val()
+      .trim();
+
+    var status = $(this)
+      .closest(".list-group")
+      .attr("id")
+      .replace("list-", "");
+
+    var index = $(this)
+      .closest("list-group-item")
+      .index();
+
+    tasks[status][index].text = text;
+
+    saveTasks();
+
+    var taskP = $("<p>")
+      .addClass("m-1")
+      .text(text);
+
+    $(this).replaceWith(taskP);
+  });
+});
+
+// due date was clicked
+$(".list-group").on("click", "span", function() {
+  // get current text
+  var date = $(this)
+    .text()
+    .trim();
+
+  // create new input element
+  var dateInput = $("<input>")
+    .attr("type", "text")
+    .addClass("form-control")
+    .val(date);
+
+  // swap out elements
+  $(this).replaceWith(dateInput);
+
+  // automatically focus on new element
+  dateInput.trigger("focus");
 });
 
 // remove all tasks
@@ -93,5 +148,3 @@ $("#remove-tasks").on("click", function() {
 
 // load tasks for the first time
 loadTasks();
-
-
